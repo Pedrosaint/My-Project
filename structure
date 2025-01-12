@@ -1,0 +1,23 @@
+EmX-site/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── ProductList.jsx
+│   │   ├── Cart.jsx
+│   │   ├── Hero.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── ProductPage.jsx
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   ├── context/
+│   │   ├── AuthContext.jsx
+│   │   ├── CartContext.jsx
+│   ├── firebase/
+│   │   ├── firebaseConfig.js
+│   ├── App.js
+│   ├── index.js
+├── package.json
+
+"pk_test_cbfc280f616cb81deaf8f1b8342ead5d8fdc702e";
