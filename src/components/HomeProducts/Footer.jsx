@@ -118,13 +118,23 @@ const Footer = () => {
                   Contact
                 </h1>
                 <div className="flex items-center gap-3">
-                  <FaLocationArrow />
+                  <FaLocationArrow className="text-xl" />
                   <p>No 5 Onyenwaku Street, Aba, Abia State, Nigeria</p>
                 </div>
                 <div className="flex items-center justify-center gap-3 mt-3 mb-6">
-                  <FaMobileAlt />
-                  <p>+234 813 031 5251</p> <br />
-                  <p className="">+234 707 259 8854</p>
+                  <FaMobileAlt className="text-xl" />
+                  <div className="flex-col">
+                    <p
+                      href="tel:+2348130315251"
+                      className="text-sm font-medium"
+                    >
+                      +234 813 031 5251
+                    </p>
+                    <p href="+2347072598854"
+                      className="text-sm font-medium"
+                    >
+                      +234 707 259 8854</p>
+                  </div>
                 </div>
               </div>
             </div>
