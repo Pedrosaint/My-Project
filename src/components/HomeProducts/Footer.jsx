@@ -5,7 +5,6 @@ import {
   FaFacebook,
   FaInstagram,
   FaWhatsapp,
-  FaLinkedin,
   FaLocationArrow,
   FaMobileAlt,
 } from "react-icons/fa";
@@ -121,7 +120,7 @@ const Footer = () => {
                   <FaLocationArrow className="text-xl" />
                   <p>No 5 Onyenwaku Street, Aba, Abia State, Nigeria</p>
                 </div>
-                <div className="flex items-center justify-center gap-3 mt-3 mb-6">
+                <div className="flex items-center  gap-3 mt-3 mb-6">
                   <FaMobileAlt className="text-xl" />
                   <div className="flex-col">
                     <p

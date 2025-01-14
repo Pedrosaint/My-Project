@@ -10,26 +10,26 @@ const ImageList = [
   {
     id: 1,
     img: Image1,
-    title: "Upgrade Your Style: Up to 50% Off Men's Wear",
+    title: "Premium Fabrics for Every Style",
     Description:
-      "Elevate your wardrobe with our exclusive men's wear collection. From timeless classics to trendy pieces, enjoy up to 50% off on all styles. Don't miss out on this chance to redefine your look with premium quality and unmatched savings.",
-    target: "Men", // Add this to specify the navigation target
+      "Discover high-quality fabrics perfect for crafting your next masterpiece. From breathable cotton to luxurious silk, find the materials you need to create timeless looks. Shop now and bring your designs to life.",
+    target: "Fabric",
   },
   {
     id: 2,
     img: Image2,
-    title: "Unmissable Deals: 30% Off Women's Wear",
+    title: "Find Your Perfect Look in Women's Wear",
     Description:
-      "Discover the latest in women's fashion with our stunning collection. Enjoy 30% off on chic dresses, cozy sweaters, and more. Shop now and embrace style that speaks volumes without breaking the bank.",
-    target: "Women", // Add this to specify the navigation target
+      "Uncover stylish pieces for every occasion. Whether it's chic dresses or cozy layers, our women's collection has you covered. Embrace effortless style today.",
+    target: "Womens",
   },
   {
     id: 3,
     img: Image3,
-    title: "Massive Clearance: 70% Off Storewide",
+    title: "Exciting Finds for Everyone in Store",
     Description:
-      "Don't miss the ultimate product sale! Enjoy a whopping 70% off on a wide range of items. From kids' essentials to trendy picks for all, stock up and save big while supplies last. It's the sale event of the season!",
-    target: "Kids", // Add this to specify the navigation target
+      "Shop a wide range of essentials for the whole family. From kids' must-haves to everyday favorites, discover quality and value in every pick. Don’t wait—start shopping now!",
+    target: "Kids",
   },
 ];
 
@@ -37,7 +37,7 @@ const ImageList = [
 const Hero = () => {
   const navigate = useNavigate()
    const handleMen = () => {
-    navigate("/Menswears");
+    navigate("/Fabric");
   };
 
   const handleWomen = () => {
@@ -75,7 +75,7 @@ const Hero = () => {
                   {/* text content section */}
                   <div className="flex flex-col justify-center gap-4 pt-12 sm:pt-0 text-center sm:text-left order-2 sm:order-1 relative z-10">
                     <h1
-                      className="text-5xl sm:text-5xl lg:text-7xl font-bold font-quicksand"
+                      className="text-5xl sm:text-5xl lg:text-6xl font-bold font-quicksand"
                     >
                       {data.title}
                     </h1>
@@ -85,7 +85,7 @@ const Hero = () => {
                     <div  >
                       <button
                         onClick={() => {
-                          if (data.target === "Men") {
+                          if (data.target === "Fabric") {
                             handleMen();
                           } else if (data.target === "Women") {
                             handleWomen();

@@ -139,7 +139,7 @@ const Products = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center text-gray-500">
+            <div className="text-center text-gray-500 pb-6">
               No womenswear products available.
             </div>
           )}

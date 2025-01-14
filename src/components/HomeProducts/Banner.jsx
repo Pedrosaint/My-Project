@@ -20,11 +20,11 @@ const Banner = () => {
           {/* text details section */}
           <div className="flex flex-col justify-center gap-6 sm:pt-0">
             <h1 className="text-3xl sm:text-4xl font-bold">
-              Winter Sale upto 50% Off
+              Winter Sale is Here!
             </h1>
-            <p  className="text-sm text-gray-500 tracking-wide leading-5">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Omnis,
-              debitis.
+            <p className="text-sm text-gray-500 tracking-wide leading-5 dark:text-white">
+              Discover incredible deals this season on your favorite products.
+              Don’t miss out on these exclusive offers—shop now!
             </p>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">

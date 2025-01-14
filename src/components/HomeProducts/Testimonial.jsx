@@ -113,7 +113,7 @@ const Testimonial = () => {
         </div>
 
         {/* Testimonial Cards */}
-        <div data-aos="zoom-in">
+        <div data-aos="zoom-in" className="">
           {comments.length >= 3 ? (
             <Slider {...sliderSettings}>
               {comments.map((comment) => (
@@ -121,23 +121,23 @@ const Testimonial = () => {
                   className="my-6 relative"
                   key={comment.id || comment.timestamp}
                 >
-                  <div className="flex flex-col gap-4 shadow-lg py-8 px-6 mx-4 rounded-xl bg-primary/40">
+                  <div className="flex flex-col gap-4 shadow-lg py-8 px-6 mx-4 rounded-xl bg-primary/40 dark:bg-primary/10 h-72 overflow-hidden">
                     {/* Decorative Quotation Marks */}
-                    <p className="text-black/20 dark:text-gray-300 text-8xl font-serif absolute -top-16 right-5">
+                    <p className="text-black/20 dark:text-gray-300 text-8xl font-serif absolute -top-14 right-5">
                       ,,
                     </p>
-                    <div className="mb-4">
+                    <div className="mb-4 flex justify-center">
                       <img
                         src={comment.img || "default_image_url"}
                         alt={comment.name || "Anonymous"}
-                        className="rounded-full w-10 h-10"
+                        className="rounded-full w-16 h-16 object-cover"
                       />
                     </div>
-                    <div className="flex flex-col gap-4">
-                      <p className="text-xs text-gray-700 dark:text-gray-300">
+                    <div className="flex flex-col gap-4 items-center text-center">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 overflow-hidden line-clamp-3 break-words">
                         {comment.text}
                       </p>
-                      <h1 className="text-xl font-bold text-black/80 dark:text-white">
+                      <h1 className="text-lg font-bold text-black/80 dark:text-white">
                         {comment.name}
                       </h1>
                     </div>
@@ -149,26 +149,25 @@ const Testimonial = () => {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {comments.map((comment) => (
                 <div
-                  className="my-6 relative shadow-lg py-8 px-6 mx-4 rounded-xl bg-primary/10 dark:bg-primary-10"
+                  className="my-6 relative shadow-lg py-8 px-6 mx-4 rounded-xl bg-primary/40 dark:bg-primary/10 h-72 overflow-hidden"
                   key={comment.id || comment.timestamp}
                 >
                   {/* Decorative Quotation Marks */}
-                  <p className="text-black/20 dark:text-gray-300 text-8xl font-serif absolute -top-16 right-5">
+                  <p className="text-black/20 dark:text-gray-300 text-8xl font-serif absolute -top-14 right-5">
                     ,,
                   </p>
-
-                  <div className="mb-4">
+                  <div className="mb-4 flex justify-center">
                     <img
                       src={comment.img || "default_image_url"}
                       alt={comment.name || "Anonymous"}
-                      className="rounded-full w-10 h-10"
+                      className="rounded-full w-16 h-16 object-cover"
                     />
                   </div>
-                  <div className="flex flex-col  gap-4">
-                    <p className="text-xs text-gray-500 dark:text-gray-300">
+                  <div className="flex flex-col gap-4 items-center text-center">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 overflow-hidden line-clamp-3 break-words">
                       {comment.text}
                     </p>
-                    <h1 className="text-xl font-bold text-black/80 dark:text-white">
+                    <h1 className="text-lg font-bold text-black/80 dark:text-white">
                       {comment.name}
                     </h1>
                   </div>

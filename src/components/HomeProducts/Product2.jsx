@@ -140,7 +140,7 @@ const Product2 = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center text-gray-500">
+            <div className="text-center text-gray-500 pb-6">
               No Menswear products available.
             </div>
           )}
