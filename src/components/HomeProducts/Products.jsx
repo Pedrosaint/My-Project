@@ -99,7 +99,7 @@ const Products = () => {
               <ClipLoader color="#36d7b7" size={50} />
             </div>
           ) : displayedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-5 p-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-5 p-4">
               {displayedProducts.map((product) => (
                 <motion.div
                   whileHover={{
@@ -130,7 +130,7 @@ const Products = () => {
                     </p>
                   </div>
                   <button
-                    className="text-center ml-5 cursor-pointer bg-primary text-white py-1 px-5 rounded-md mb-2 hover:translate-x-2 duration-300 ease-out"
+                    className="text-center ml-5 cursor-pointer bg-primary text-white py-1 px-3 rounded-md mb-2 hover:scale-90 duration-300 ease-out"
                     onClick={() => openModal(product)}
                   >
                     Order Now
@@ -158,12 +158,12 @@ const Products = () => {
       </div>
 
       {/* Modal Component */}
-            <Modal
-              isOpen={isModalOpen}
-              onClose={closeModal}
-              productId={selectedProduct?.id} // Pass only the product ID
-              onAddToCart={handleAddToCart} // Pass callback to handle cart addition
-            />
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        productId={selectedProduct?.id} // Pass only the product ID
+        onAddToCart={handleAddToCart} // Pass callback to handle cart addition
+      />
     </div>
   );
 };

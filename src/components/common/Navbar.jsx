@@ -276,32 +276,39 @@ const Navbar = () => {
                   onClick={() => setSidebarOpen(false)} // Close sidebar when overlay is clicked
                 >
                   <div
-                    className="w-[70%] max-w-[250px] bg-white dark:bg-gray-900 h-full p-4 shadow-md"
+                    className="w-[70%] max-w-[250px] bg-white dark:bg-gray-900 h-full p-4 shadow-md flex flex-col justify-between"
                     onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the sidebar
                   >
-                    <button
-                      className="ml-auto block text-end p-3 hover:bg-primary/40 rounded-full dark:text-white"
-                      onClick={() => setSidebarOpen(false)}
-                    >
-                      <ArrowLeft size={24} />
-                    </button>
+                    <div>
+                      <button
+                        className="ml-auto block text-end p-3 hover:bg-primary/40 rounded-full dark:text-white"
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <ArrowLeft size={24} />
+                      </button>
 
-                    <ul className="space-y-4">
-                      {menu.map((data) => (
-                        <li key={data.id}>
-                          <a
-                            href={data.Link}
-                            className={`block px-4 py-2 rounded-md ${
-                              location.pathname === data.Link
-                                ? "bg-primary text-white"
-                                : "hover:bg-primary/20 hover:text-primary"
-                            }`}
-                          >
-                            {data.name}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
+                      <ul className="space-y-4">
+                        {menu.map((data) => (
+                          <li key={data.id}>
+                            <a
+                              href={data.Link}
+                              className={`block px-4 py-2 rounded-md ${
+                                location.pathname === data.Link
+                                  ? "bg-primary text-white"
+                                  : "hover:bg-primary/20 hover:text-primary"
+                              }`}
+                            >
+                              {data.name}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Footer */}
+                    <p className="text-center text-gray-500 dark:text-gray-400">
+                      EmmeXtella Enterprise
+                    </p>
                   </div>
                 </div>
               )}

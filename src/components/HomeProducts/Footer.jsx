@@ -118,21 +118,21 @@ const Footer = () => {
                 </h1>
                 <div className="flex items-center gap-3">
                   <FaLocationArrow className="text-xl" />
-                  <p>No 5 Onyenwaku Street, Aba, Abia State, Nigeria</p>
+                  <p>No 5 Onyenwaku Street, Aba, Abia State, Nigeria.</p>
                 </div>
                 <div className="flex items-center  gap-3 mt-3 mb-6">
                   <FaMobileAlt className="text-xl" />
                   <div className="flex-col">
-                    <p
+                    <a
                       href="tel:+2348130315251"
-                      className="text-sm font-medium"
+                      className="text-sm font-medium hover:text-blue-700"
                     >
                       +234 813 031 5251
-                    </p>
-                    <p href="+2347072598854"
-                      className="text-sm font-medium"
+                    </a> <br />
+                    <a href="tel:+2347072598854"
+                      className="text-sm font-medium hover:text-blue-700"
                     >
-                      +234 707 259 8854</p>
+                      +234 707 259 8854</a>
                   </div>
                 </div>
               </div>
