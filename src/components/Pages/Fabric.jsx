@@ -5,7 +5,7 @@ import { FaStar } from "react-icons/fa";
 import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../Firebase/Firebase"; // Update this path to your Firebase configuration file
 import { ClipLoader } from "react-spinners";
-import Modal from "../../components/Modal"; // Ensure you have the Modal component in this path
+import BuyButton from "../BuyButtin";
 
 const Fabric = () => {
   const { theme } = useContext(ThemeContext);
@@ -13,9 +13,6 @@ const Fabric = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const [isModalOpen, setModalOpen] = useState(false); // For modal visibility
-  const [selectedProduct, setSelectedProduct] = useState(null); // For selected product
 
   // Fetch products from Firestore
   useEffect(() => {
@@ -30,21 +27,8 @@ const Fabric = () => {
         const FabricsProducts = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-          isLoading: true,
         }));
-
         setProducts(FabricsProducts);
-
-        // Simulate a staggered loading effect
-        FabricsProducts.forEach((product, index) => {
-          setTimeout(() => {
-            setProducts((prev) =>
-              prev.map((p) =>
-                p.id === product.id ? { ...p, isLoading: false } : p
-              )
-            );
-          }, index * 500);
-        });
       } catch (error) {
         console.error("Error fetching Fabrics products: ", error);
       } finally {
@@ -54,32 +38,6 @@ const Fabric = () => {
 
     fetchFabricsProducts();
   }, []);
-
-  // Handle modal opening
-  const openModal = (product) => {
-    setSelectedProduct(product);
-    setModalOpen(true);
-  };
-
-  // Handle modal closing
-  const closeModal = () => {
-    setSelectedProduct(null);
-    setModalOpen(false);
-  };
-
-  // Handle adding product to cart
-  const handleAddToCart = async (cartDetails) => {
-    try {
-      await addDoc(collection(db, "cart"), {
-        ...cartDetails,
-        addedAt: new Date(),
-      });
-      console.log("Product added to cart successfully");
-      closeModal();
-    } catch (error) {
-      console.error("Error adding product to cart: ", error);
-    }
-  };
 
   return (
     <div className="min-h-[550px] sm:min-h-[650px] mt-20 relative overflow-hidden bg-gray-100 dark:bg-gray-950 dark:text-white">
@@ -98,20 +56,10 @@ const Fabric = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-5 p-4">
-            {products.map((product) =>
-              product.isLoading ? (
-                <div
-                  key={product.id}
-                  className="flex justify-center items-center h-[250px] w-[180px]"
-                >
-                  <ClipLoader color="#36d7b7" size={40} />
-                </div>
-              ) : (
+            {products.map((product) => (
                 <motion.div
-                  data-aos="fade-up"
-                  data-aos-delay="100"
                   key={product.id}
-                  className="space-y-3 cursor-pointer rounded-lg"
+                  className="cursor-pointer rounded-lg"
                 >
                   <img
                     src={product.image || "default-image-path.jpg"}
@@ -133,28 +81,12 @@ const Fabric = () => {
                       <span>{product.rating || "4.0"}</span>
                     </div>
                   </div>
-                  <div className="flex justify-center">
-                    <button
-                      className="text-center cursor-pointer bg-primary text-white py-1 px-5 rounded-md mb-2 hover:translate-x-2 duration-300 ease-out"
-                      onClick={() => openModal(product)}
-                    >
-                      Buy
-                    </button>
-                  </div>
+                  <BuyButton product={product} />
                 </motion.div>
-              )
-            )}
+              ))}
           </div>
         )}
       </div>
-
-      {/* Modal Component */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        productId={selectedProduct?.id} // Pass only the product ID
-        onAddToCart={handleAddToCart} // Pass callback to handle cart addition
-      />
     </div>
   );
 };

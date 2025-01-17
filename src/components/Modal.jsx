@@ -181,7 +181,7 @@ const Modal = ({ isOpen, onClose, productId }) => {
               <img
                 src={product.image}
                 alt={product.name}
-                className="rounded-lg mb-3 w-full"
+                className="rounded-lg mb-3 w-44"
               />
               <div className="mb-3">
                 <p className="text-sm sm:text-base font-medium">

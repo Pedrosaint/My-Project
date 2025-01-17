@@ -7,7 +7,7 @@ import LoginButton from "../LoginButton";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../Firebase/Firebase"; // Replace with your Firebase config file path
+import { db } from "../Firebase/Firebase";
 
 
 const menu = [
@@ -316,7 +316,7 @@ const Navbar = () => {
           </div>
 
           {/* Lower Navbar */}
-          <div className="flex justify-center  dark:border-b-slate-600 border-b-2">
+          <div className="flex justify-center">
             <ul className="sm:flex hidden  items-center gap-4 p-2">
               {menu.map((data) => (
                 <li key={data.id}>
