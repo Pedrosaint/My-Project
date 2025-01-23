@@ -16,7 +16,7 @@ const FooterLinks = [
   },
   {
     title: "Fabrics",
-    link: "/Fabric",
+    link: "/Fabrics",
   },
   {
     title: "Men",
@@ -37,6 +37,11 @@ const FooterLinks = [
 ];
 
 const Footer = () => {
+  // Function to scroll to the top of the page
+  const scrollToTop = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="text-white bg-black">
       <div className="container">
@@ -72,7 +77,11 @@ const Footer = () => {
                     className="cursor-pointer hover:text-primary hover:translate-x-1 duration-300 text-gray-200"
                     key={link.title}
                   >
-                    <Link to={link.link} className="block">
+                    <Link
+                      to={link.link}
+                      className="block"
+                      onClick={scrollToTop} // Add this to ensure scrolling
+                    >
                       {link.title}
                     </Link>
                   </li>
@@ -128,11 +137,14 @@ const Footer = () => {
                       className="text-sm font-medium hover:text-blue-700"
                     >
                       +234 813 031 5251
-                    </a> <br />
-                    <a href="tel:+2347072598854"
+                    </a>
+                    <br />
+                    <a
+                      href="tel:+2347072598854"
                       className="text-sm font-medium hover:text-blue-700"
                     >
-                      +234 707 259 8854</a>
+                      +234 707 259 8854
+                    </a>
                   </div>
                 </div>
               </div>

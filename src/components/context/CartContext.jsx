@@ -3,10 +3,10 @@ import { db } from "../Firebase/Firebase";
 import { doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-// Load cart from localStorage
-const localCart = JSON.parse(localStorage.getItem("guestCart")) || [];
-const initialState = { cart: localCart, cartCount: localCart.length };
+// Initial state
+const initialState = { cart: [], cartCount: 0 };
 
+// Cart Reducer
 const cartReducer = (state, action) => {
   switch (action.type) {
     case "SET_CART":
@@ -34,7 +34,7 @@ const cartReducer = (state, action) => {
       } else {
         updatedCart = [...state.cart, action.payload];
       }
-      localStorage.setItem("guestCart", JSON.stringify(updatedCart)); // Save to localStorage
+
       console.log("Cart after ADD_TO_CART:", updatedCart);
       return {
         cart: updatedCart,
@@ -44,15 +44,20 @@ const cartReducer = (state, action) => {
       const filteredCart = state.cart.filter(
         (item) => item.productId !== action.payload
       );
-      localStorage.setItem("guestCart", JSON.stringify(filteredCart)); // Save to localStorage
       console.log("Cart after REMOVE_FROM_CART:", filteredCart);
       return {
         cart: filteredCart,
         cartCount: filteredCart.length,
       };
     case "CLEAR_CART":
-      localStorage.removeItem("guestCart"); // Clear localStorage
       console.log("Cart cleared.");
+
+      if (action.userId) {
+        const docRef = doc(db, "carts", action.userId);
+        setDoc(docRef, { cart: [] }, { merge: true }); // Clear from Firestore
+        console.log("Cart cleared from Firestore.");
+      }
+
       return {
         cart: [],
         cartCount: 0,
@@ -69,15 +74,6 @@ const CartProvider = ({ children }) => {
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Sync cart with localStorage on app initialization
-  useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("guestCart")) || [];
-    if (state.cart.length === 0 && savedCart.length > 0) {
-      console.log("Initializing cart from localStorage:", savedCart);
-      dispatch({ type: "SET_CART", payload: savedCart });
-    }
-  }, []);
-
   // Manage authentication state
   useEffect(() => {
     const auth = getAuth();
@@ -88,17 +84,14 @@ const CartProvider = ({ children }) => {
       } else {
         console.log("User logged out.");
         setUserId(null);
-        const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
-        console.log("Restoring guest cart on logout:", guestCart);
-        dispatch({ type: "SET_CART", payload: guestCart });
-        
+        dispatch({ type: "SET_CART", payload: [] });
       }
     });
 
     return () => unsubscribe();
   }, []);
 
-  // Load and merge cart data from Firestore for logged-in users
+  // Load cart from Firestore
   useEffect(() => {
     if (!userId) return;
 
@@ -114,68 +107,75 @@ const CartProvider = ({ children }) => {
         console.log("Cart fetched from Firestore:", firestoreCart);
       }
 
-      const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
-      console.log("Merging guest cart with Firestore cart:", guestCart);
-      const mergedCart = [...firestoreCart];
-
-      guestCart.forEach((guestItem) => {
-        const existingItem = mergedCart.find(
-          (item) =>
-            item.productId === guestItem.productId &&
-            item.size === guestItem.size &&
-            item.color === guestItem.color
-        );
-        if (existingItem) {
-          existingItem.quantity += guestItem.quantity;
-        } else {
-          mergedCart.push(guestItem);
-        }
-      });
-
-      await setDoc(docRef, { cart: mergedCart }, { merge: true });
-      console.log("Merged cart saved to Firestore:", mergedCart);
-
-      localStorage.removeItem("guestCart"); // Clear localStorage after merging
-      console.log("Cleared guest cart from localStorage.");
-      dispatch({ type: "SET_CART", payload: mergedCart });
+      if (firestoreCart.length === 0) {
+        console.log("Cart is empty in Firestore, keeping it empty.");
+        dispatch({ type: "SET_CART", payload: [] });
+      } else {
+        dispatch({ type: "SET_CART", payload: firestoreCart });
+      }
 
       setLoading(false);
     };
 
     fetchCart();
 
-    // Realtime updates (optional)
+    // Realtime updates
     const unsubscribe = onSnapshot(doc(db, "carts", userId), (docSnap) => {
       if (docSnap.exists()) {
-        console.log("Realtime Firestore update:", docSnap.data().cart);
-        dispatch({ type: "SET_CART", payload: docSnap.data().cart || [] });
+        const updatedCart = docSnap.data().cart || [];
+        console.log("Realtime Firestore update:", updatedCart);
+
+        if (updatedCart.length === 0) {
+          console.log(
+            "Realtime update detected an empty cart, keeping it empty."
+          );
+          dispatch({ type: "SET_CART", payload: [] });
+        } else {
+          dispatch({ type: "SET_CART", payload: updatedCart });
+        }
       }
     });
 
     return () => unsubscribe();
   }, [userId]);
 
-  // Save cart data to Firestore for logged-in users
+  // Save cart data to Firestore
   useEffect(() => {
     if (!userId || loading) return;
 
     const saveCart = async () => {
       try {
         const docRef = doc(db, "carts", userId);
-        await setDoc(docRef, { cart: state.cart }, { merge: true });
-        console.log("Cart saved to Firestore:", state.cart);
+
+        if (state.cart.length === 0) {
+          await setDoc(docRef, { cart: [] });
+          console.log("Cart cleared from Firestore after payment.");
+        } else {
+          await setDoc(docRef, { cart: state.cart }, { merge: true });
+          console.log("Cart saved to Firestore:", state.cart);
+        }
       } catch (error) {
         console.error("Error saving cart to Firestore:", error);
       }
     };
 
-    const debounceTimeout = setTimeout(saveCart, 500); // Debounce save
+    const debounceTimeout = setTimeout(saveCart, 500);
     return () => clearTimeout(debounceTimeout);
   }, [state.cart, userId, loading]);
 
+  // Function to clear the cart after payment
+  const clearCartAfterPayment = () => {
+    dispatch({ type: "CLEAR_CART", userId });
+  };
+
   return (
     <CartContext.Provider
-      value={{ cart: state.cart, cartCount: state.cartCount, dispatch }}
+      value={{
+        cart: state.cart,
+        cartCount: state.cartCount,
+        dispatch,
+        clearCartAfterPayment,
+      }}
     >
       {children}
     </CartContext.Provider>

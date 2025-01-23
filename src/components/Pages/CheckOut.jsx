@@ -13,9 +13,10 @@ import { db } from "../Firebase/Firebase";
 import Navbar from "../common/Navbar";
 import Footer from "../HomeProducts/Footer";
 import { PaystackButton } from "react-paystack";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css"; // Import default styles
+import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
+import CountrySelector from "../common/CountrySelector";
+import PhoneNumberInput from "../common/PhoneInput";
 
 const CheckoutPage = () => {
   const { currentUser } = useContext(AuthContext);
@@ -30,15 +31,16 @@ const CheckoutPage = () => {
     state: "",
     zipCode: "",
     country: "",
+    phone: "",
   });
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [phone, setPhone] = useState("");
 
-  const handlePhoneChange = (value) => {
-    setPhone(value); // value includes country code and phone number
-  };
+  // const handlePhoneChange = (value) => {
+    // setPhone(value); // Update phone in state
+  // };
 
   const calculateTotal = () => {
     const total = cartItems
@@ -168,6 +170,7 @@ const CheckoutPage = () => {
     return () => unsubscribe();
   }, [currentUser]);
 
+  //---------------- Handle Input Change ------------------->
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShippingAddress((prev) => ({
@@ -176,23 +179,60 @@ const CheckoutPage = () => {
     }));
   };
 
+  // Handle phone number change
+  const handlePhoneChange = (value) => {
+    setPhone(value);
+    setShippingAddress((prev) => ({
+      ...prev,
+      phone: value, // Save phone number in shippingAddress
+    }));
+  };
+
+  // Handle country selection change
+  const handleCountryChange = (value) => {
+    setShippingAddress((prev) => ({
+      ...prev,
+      country: value, // Save country in shippingAddress
+    }));
+  };
+
   const handleAddShippingAddress = async () => {
     setIsSaving(true);
+    // Check if all required fields are filled
+    const requiredFields = ["fullName", "address", "city", "state"];
+    const isFormComplete = requiredFields.every(
+      (field) => shippingAddress[field] && shippingAddress[field].trim() !== ""
+    );
+
+    if (!isFormComplete) {
+      toast.error("Please complete all fields before saving the address.");
+      return;
+    }
+
     try {
+      // Save address to Firestore
       await addDoc(collection(db, "shippingAddresses"), {
-        userId: currentUser.uid,
         ...shippingAddress,
+        createdAt: new Date(), // Optional: Add a timestamp
       });
-      toast.success("Shipping address saved successfully!");
+
+      // Update local state after successful Firestore save
+      setSavedAddresses((prev) => [
+        ...prev,
+        { id: Date.now(), ...shippingAddress },
+      ]);
+      setShippingAddress({});
       setShowShippingForm(false);
-    } catch (err) {
-      console.error("Error saving shipping address:", err);
-      toast.error("Failed to save shipping address.");
+      toast.success("Address saved successfully!");
+    } catch (error) {
+      console.error("Error saving address to Firestore:", error);
+      toast.error("Failed to save the address. Please try again.");
     } finally {
       setIsSaving(false);
     }
   };
 
+  //--------------------- Handle Remove Address ----------------------->
   const handleRemoveAddress = async (addressId) => {
     try {
       const docRef = doc(db, "shippingAddresses", addressId);
@@ -212,8 +252,20 @@ const CheckoutPage = () => {
     setShippingAddress(address);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return;
+  <div className="flex flex-col items-center justify-center h-screen">
+    <ClipLoader color="#36d7b7" size={50} />
+  </div>;
   if (error) return <div>{error}</div>;
+
+  //---------------------- If the Form is complete -------------------------------->
+  const isFormComplete =
+    shippingAddress.fullName &&
+    shippingAddress.address &&
+    shippingAddress.city &&
+    shippingAddress.state;
+  // shippingAddress.phoneNumber &&
+  // shippingAddress.country;
 
   return (
     <>
@@ -257,16 +309,6 @@ const CheckoutPage = () => {
                 Total: ₦{calculateTotal().toLocaleString()}
               </p>
             </div>
-            {/* <button
-              disabled={savedAddresses.length === 0}
-              className={`${
-                savedAddresses.length > 0
-                  ? "bg-blue-500 hover:bg-blue-700"
-                  : "bg-gray-300 cursor-not-allowed"
-              } text-white font-bold py-2 px-4 rounded mt-4`}
-            >
-              <PaystackButton {...paystackConfig} />
-            </button> */}
 
             <button
               disabled={savedAddresses.length === 0}
@@ -304,7 +346,7 @@ const CheckoutPage = () => {
                   >
                     <p className="font-bold">{address.fullName}</p>
                     <p>{address.phoneNumber}</p>
-                    <p>{`${address.address}, ${address.city}, ${address.state}, ${address.zipCode}, ${address.country}`}</p>
+                    <p>{`${address.address}, ${address.city}, ${address.state}, ${address.zipCode}`}</p>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -330,64 +372,53 @@ const CheckoutPage = () => {
               <div className="mt-4">
                 <h3 className="font-semibold mb-2">Shipping Address</h3>
                 <form>
-                  {[
-                    "fullName",
-                    "address",
-                    "city",
-                    "state",
-                    "zipCode",
-                    "country",
-                  ].map((field) => (
-                    <div className="mb-4" key={field}>
-                      <label
-                        htmlFor={field}
-                        className="block text-sm font-medium text-gray-700 capitalize dark:text-white"
-                      >
-                        {field.replace(/([A-Z])/g, " $1")}
-                      </label>
-                      <input
-                        type="text"
-                        id={field}
-                        name={field}
-                        value={shippingAddress[field] || ""}
-                        onChange={handleInputChange}
-                        className="mt-1 p-1 border outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md w-full"
-                        required
-                      />
-                    </div>
-                  ))}
-
+                  {["fullName", "address", "city", "state", "zipCode"].map(
+                    (field) => (
+                      <div className="mb-4" key={field}>
+                        <label
+                          htmlFor={field}
+                          className="block text-sm font-medium text-gray-700 capitalize dark:text-white"
+                        >
+                          {field.replace(/([A-Z])/g, " $1")}
+                        </label>
+                        <input
+                          type="text"
+                          id={field}
+                          name={field}
+                          value={shippingAddress[field] || ""}
+                          onChange={handleInputChange}
+                          className={`mt-1 p-1 border outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md w-full indent-2 ${
+                            !shippingAddress[field] ? "border-red-500" : ""
+                          }`}
+                          required
+                        />
+                        {!shippingAddress[field] && (
+                          <p className="text-red-500 text-sm">
+                            This field is required.
+                          </p>
+                        )}
+                      </div>
+                    )
+                  )}
+                  <CountrySelector
+                    value={shippingAddress.country}
+                    onChange={handleCountryChange}
+                  />
                   <div className="mb-4">
-                    <label
-                      htmlFor="phoneNumber"
-                      className="block text-sm font-medium text-gray-700 capitalize dark:text-white"
-                    >
-                      Phone Number
-                    </label>
-                    <div className="flex mt-1 dark:text-black dark:bg-gray-900">
-                      <PhoneInput
-                        country={"ng"} // Default to Nigeria
-                        value={phone}
-                        onChange={handlePhoneChange}
-                        inputStyle={{
-                          width: "100%",
-                          borderRadius: "0.375rem",
-                          padding: "",
-                          border: "1px solid #ccc",
-                        }}
-                        dropdownStyle={{
-                          borderRadius: "0.375rem",
-                        }}
-                      />
-                    </div>
+                    <PhoneNumberInput
+                      value={shippingAddress.phone}
+                      phone={phone}
+                      handlePhoneChange={handlePhoneChange}
+                    />
                   </div>
-
                   <button
                     type="button"
                     onClick={handleAddShippingAddress}
-                    disabled={isSaving}
+                    disabled={!isFormComplete || isSaving} // Disable button if form is incomplete or saving
                     className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded relative flex justify-between items-center ${
-                      isSaving ? "opacity-50 cursor-wait" : ""
+                      !isFormComplete || isSaving
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
                     }`}
                   >
                     {isSaving ? (

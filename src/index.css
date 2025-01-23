@@ -204,3 +204,15 @@
 .form input:focus{
     border-color: green;
 }
+
+
+
+.custom-phone-dropdown .country:hover {
+  background-color: #374151; /* Dark gray hover background */
+  color: #090909; /* Light text color */
+}
+
+.custom-phone-dropdown .country {
+  padding: 10px;
+  transition: background-color 0.2s ease;
+}

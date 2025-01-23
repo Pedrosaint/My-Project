@@ -19,7 +19,7 @@ const menu = [
   {
     id: 2,
     name: "Fabric",
-    Link: "/Fabric",
+    Link: "/Fabrics",
   },
   {
     id: 3,
@@ -55,13 +55,13 @@ const Navbar = () => {
 
   const handleCart = () => {
     navigate("/Cart");
+    window.scroll(0, 0);
   };
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
 
- 
   useEffect(() => {
     // Fetch products from Firebase
     const fetchProducts = async () => {
@@ -80,27 +80,88 @@ const Navbar = () => {
     fetchProducts();
   }, []);
 
-
-
   const handleClearSearch = () => {
     setSearchQuery(""); // Clear the search query
-    };
-    
+  };
+
+  // // Handle Search Input
+  // const handleSearch = (e) => {
+  //   const query = e.target.value;
+  //   setSearchQuery(query);
+
+  //   // Filter products based on the search query
+  //   const filtered = products.filter((product) =>
+  //     product.name.toLowerCase().includes(query.toLowerCase())
+  //   );
+  //   console.log("Filtered Products:", filtered);
+  //   console.log("All Products:", products);
+  //   setFilteredProducts(filtered);
+  // };
+  // Handle Search Input
+  // const handleSearch = (e) => {
+  //   const query = e.target.value;
+  //   setSearchQuery(query);
+
+  //   // Filter products based on the search query
+  //   const filtered = products
+  //     .filter((product) =>
+  //       product.name.toLowerCase().includes(query.toLowerCase())
+  //     )
+  //     .sort((a, b) => {
+  //       // Prioritize items that start with the search query
+  //       const startsWithA = a.name
+  //         .toLowerCase()
+  //         .startsWith(query.toLowerCase());
+  //       const startsWithB = b.name
+  //         .toLowerCase()
+  //         .startsWith(query.toLowerCase());
+
+  //       if (startsWithA && !startsWithB) return -1; // a comes first
+  //       if (!startsWithA && startsWithB) return 1; // b comes first
+  //       return 0; // keep original order otherwise
+  //     });
+
+  //   setFilteredProducts(filtered);
+  // };
+
+  // // Handle Navigation
+  // const handleProductClick = (category) => {
+  //   console.log("Navigating to category:", category);
+  //   navigate(`/${category}`);
+  //   setSearchQuery(""); // Clear search bar after navigation
+  //   setFilteredProducts([]); // Clear dropdown after navigation
+  // };
+
   // Handle Search Input
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
 
     // Filter products based on the search query
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(query.toLowerCase())
-    );
+    const filtered = products
+      .filter((product) =>
+        product.name.toLowerCase().includes(query.toLowerCase())
+      )
+      .sort((a, b) => {
+        const startsWithA = a.name
+          .toLowerCase()
+          .startsWith(query.toLowerCase());
+        const startsWithB = b.name
+          .toLowerCase()
+          .startsWith(query.toLowerCase());
+
+        if (startsWithA && !startsWithB) return -1;
+        if (!startsWithA && startsWithB) return 1;
+        return 0;
+      });
+
     setFilteredProducts(filtered);
   };
 
   // Handle Navigation
-  const handleProductClick = (category) => {
-    navigate(`/${category}`);
+  const handleProductClick = (category, searchQuery) => {
+    console.log("Navigating to category:", category);
+    navigate(`/${category}`, { state: { searchQuery } }); // Pass the search query as state
     setSearchQuery(""); // Clear search bar after navigation
     setFilteredProducts([]); // Clear dropdown after navigation
   };
@@ -159,7 +220,9 @@ const Navbar = () => {
                         <div
                           key={product.id}
                           className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                          onClick={() => handleProductClick(product.category)} // Navigate based on product category
+                          onClick={() =>
+                            handleProductClick(product.category, searchQuery)
+                          } // Navigate based on product category
                         >
                           {product.name} for {product.category}
                         </div>

@@ -6,7 +6,8 @@ import {
   addDoc,
   query,
   orderBy,
-  getDocs,
+  onSnapshot,
+  Timestamp,
 } from "firebase/firestore"; // Import Firestore functions
 import { onAuthStateChanged } from "firebase/auth"; // To track user authentication state
 
@@ -23,29 +24,18 @@ const Testimonial = () => {
     return () => unsubscribe(); // Clean up the listener on component unmount
   }, []);
 
-  // Fetch comments from Firestore
+  // Fetch comments from Firestore (real-time updates)
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const q = query(
-          collection(db, "comments"),
-          orderBy("timestamp", "desc")
-        );
-        const snapshot = await getDocs(q);
-
-        // Map and set state with unique IDs
-        const fetchedComments = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        console.log("Fetched Comments:", fetchedComments); // Debug log
-        setComments(fetchedComments); // Replace state, not append
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-
-    fetchComments();
+    const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedComments = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log("Real-Time Comments:", fetchedComments); // Debug log
+      setComments(fetchedComments);
+    });
+    return () => unsubscribe(); // Clean up Firestore listener on unmount
   }, []);
 
   // Handle new comment submission
@@ -57,16 +47,13 @@ const Testimonial = () => {
       try {
         const commentData = {
           name: user.displayName || user.email || "Anonymous",
-          img: user.photoURL || "default_image_url", // Use a default image if user has none
+          img: user.photoURL || null,
           text: newComment,
-          timestamp: new Date(),
+          timestamp: Timestamp.now(),
         };
 
         // Add new comment to Firestore
         await addDoc(collection(db, "comments"), commentData);
-
-        // Update UI with the new comment
-        setComments([commentData, ...comments]);
         setNewComment(""); // Clear the input field
       } catch (error) {
         console.error("Error adding comment:", error);
@@ -119,19 +106,27 @@ const Testimonial = () => {
               {comments.map((comment) => (
                 <div
                   className="my-6 relative"
-                  key={comment.id || comment.timestamp}
+                  key={comment.id || comment.timestamp?.toMillis()}
                 >
-                  <div className="flex flex-col gap-4 shadow-lg py-8 px-6 mx-4 rounded-xl bg-primary/40  h-64 overflow-hidden">
+                  <div className="flex flex-col gap-4 shadow-lg py-8 px-6 mx-4 rounded-xl bg-primary/40 h-64 overflow-hidden">
                     {/* Decorative Quotation Marks */}
                     <p className="text-black/20 dark:text-gray-300 text-8xl font-serif absolute -top-14 right-5">
                       ,,
                     </p>
                     <div className="mb-4 flex justify-center">
-                      <img
-                        src={comment.img || comment?.name?.charAt(0)}
-                        alt={comment.name || "Anonymous"}
-                        className="rounded-full w-16 h-16 object-cover"
-                      />
+                      {comment.img ? (
+                        <img
+                          src={comment.img}
+                          alt={comment.name}
+                          className="w-10 h-10 rounded-full"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-500 dark:bg-yellow-800 font-bold">
+                          <span className="text-white text-xl font-bold">
+                            {comment?.name?.charAt(0)?.toUpperCase()}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col gap-4 items-center text-center">
                       <p className="text-sm text-gray-700 dark:text-gray-300 overflow-hidden line-clamp-3 break-words">
@@ -149,19 +144,27 @@ const Testimonial = () => {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {comments.map((comment) => (
                 <div
-                  className="my-6 relative shadow-lg py-8 px-6 mx-4 rounded-xl bg-primary/40  h-64 overflow-hidden"
-                  key={comment.id || comment.timestamp}
+                  className="my-6 relative shadow-lg py-8 px-6 mx-4 rounded-xl bg-primary/40 h-64 overflow-hidden"
+                  key={comment.id || comment.timestamp?.toMillis()}
                 >
                   {/* Decorative Quotation Marks */}
                   <p className="text-black/20 dark:text-gray-300 text-8xl font-serif absolute -top-14 right-5">
                     ,,
                   </p>
                   <div className="mb-4 flex justify-center">
-                    <img
-                      src={comment.img || comment?.name?.charAt(0)}
-                      alt={comment.name || "Anonymous"}
-                      className="rounded-full w-16 h-16 object-cover"
-                    />
+                    {comment.img ? (
+                      <img
+                        src={comment.img}
+                        alt={comment.name}
+                        className="w-10 h-10 rounded-full"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-500 dark:bg-yellow-800 font-bold">
+                        <span className="text-white text-xl font-bold">
+                          {comment?.name?.charAt(0)?.toUpperCase()}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col gap-4 items-center text-center">
                     <p className="text-sm text-gray-700 dark:text-gray-300 overflow-hidden line-clamp-3 break-words">
@@ -183,14 +186,14 @@ const Testimonial = () => {
             <h2 className="text-xl font-bold mb-4">Leave a Comment</h2>
             <form onSubmit={handleCommentSubmit}>
               <textarea
-                className="w-full p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                className="w-full p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-700 dark:text-white outline-none"
                 placeholder="Write your comment here..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
               ></textarea>
               <button
                 type="submit"
-                className="mt-4 px-6 py-2 bg-primary text-white rounded-lg"
+                className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-yellow-700"
               >
                 Submit
               </button>

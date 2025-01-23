@@ -9,9 +9,10 @@ const LoginButton = () => {
 
   const handleAction = () => {
     if (currentUser) {
-      navigate("/Profile"); // Navigate to the logout confirmation page
+      navigate("/Profile");
+      window.scrollTo(0, 0);
     } else {
-      navigate("/login"); // Navigate to the login page
+      navigate("/login");
     }
   };
 
