@@ -181,7 +181,11 @@ const Navbar = () => {
                   href="#"
                   className="font-bold font-quicksand text-2xl sm:text-3xl flex gap-1"
                 >
-                  <img src={Logo} alt="Logo" className="w-10 uppercase font-serif" />
+                  <img
+                    src={Logo}
+                    alt="Logo"
+                    className="w-10 uppercase font-serif"
+                  />
                   <a href="/">XtellaNova</a>
                 </a>
               </div>
@@ -270,7 +274,6 @@ const Navbar = () => {
 
                 {/* Icons */}
                 <div className="flex items-center gap-4">
-                  <ThemeToggle />
                   <button
                     onClick={handleCart}
                     className="text-primary relative"
@@ -365,6 +368,10 @@ const Navbar = () => {
                             </a>
                           </li>
                         ))}
+                        <div className="bg-blue-700 w-full rounded-md flex justify-evenly p-3">
+                          <span className="font-mono font-medium text-sm text-white">Dark/Light Mode</span>
+                          <ThemeToggle />
+                        </div>
                       </ul>
                     </div>
 
