@@ -13,7 +13,7 @@ const ImageList = [
     title: "Premium Fabrics for Every Style",
     Description:
       "Discover high-quality fabrics perfect for crafting your next masterpiece. From breathable cotton to luxurious silk, find the materials you need to create timeless looks. Shop now and bring your designs to life.",
-    target: "/Fabric", // Change target to match actual routes
+    target: "/Fabrics", // Change target to match actual routes
   },
   {
     id: 2,

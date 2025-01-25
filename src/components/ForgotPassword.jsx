@@ -27,8 +27,8 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-gray-200 p-6 rounded-lg shadow-2xl w-80">
+    <div className="flex items-center justify-center h-screen">
+      <div className="bg-white p-6 rounded-lg shadow-2xl w-80">
         <h1 className="text-center text-2xl font-bold text-black">
           Forgot Password
         </h1>
