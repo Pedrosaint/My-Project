@@ -181,7 +181,7 @@ const Navbar = () => {
                   href="#"
                   className="font-bold font-quicksand text-2xl sm:text-3xl flex gap-1"
                 >
-                  <img src={Logo} alt="Logo" className="w-10 uppercase" />
+                  <img src={Logo} alt="Logo" className="w-10 uppercase font-serif" />
                   <a href="/">XtellaNova</a>
                 </a>
               </div>

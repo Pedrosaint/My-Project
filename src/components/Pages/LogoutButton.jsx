@@ -8,6 +8,7 @@ import { LuLogOut } from "react-icons/lu";
 import { IoCartOutline } from "react-icons/io5";
 import { IoMdCall } from "react-icons/io";
 import { FiShoppingBag } from "react-icons/fi";
+import LoadingText from "../LoadingText";
 
 const LogoutPage = () => {
   const navigate = useNavigate();
@@ -52,23 +53,27 @@ const LogoutPage = () => {
       <>
         <Navbar />
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl m-5">
+          <div className="bg-white dark:bg-gray-800 p-7 rounded-lg shadow-lg w-full max-w-4xl m-5">
             {/* Profile Details */}
             {user ? (
-              <div className="flex flex-col items-center text-center mb-6">
-                <div className="bg-red-500 text-white rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold">
+              <div className="flex flex-col items-center text-center mb-5">
+                <div className="bg-red-500 text-white dark:text-black rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="mt-4">
-                  <h3 className="text-lg font-bold">{user.name}</h3>
-                  <p className="text-sm text-gray-500">{user.email}</p>
+                  <h3 className="text-lg font-bold text-black dark:text-white">
+                    {user.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-white">
+                    {user.email}
+                  </p>
                   {user.phone !== "N/A" && (
                     <p className="text-sm text-gray-500">{user.phone}</p>
                   )}
                 </div>
               </div>
             ) : (
-              <p>Loading user information...</p>
+              <LoadingText />
             )}
 
             {/* Buttons */}
