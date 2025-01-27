@@ -105,6 +105,8 @@ const CheckoutPage = () => {
         status: "Pending",
         shippingAddress,
       };
+      console.log("Order data to be saved:", orderData);
+
 
       const orderRef = await addDoc(collection(db, "orders"), orderData);
       console.log("Order saved with ID:", orderRef.id);
@@ -206,21 +208,17 @@ const CheckoutPage = () => {
 
     if (!isFormComplete) {
       toast.error("Please complete all fields before saving the address.");
+      setIsSaving(false);
       return;
     }
 
     try {
       // Save address to Firestore
       await addDoc(collection(db, "shippingAddresses"), {
+        userId: currentUser.uid,
         ...shippingAddress,
         createdAt: new Date(), // Optional: Add a timestamp
       });
-
-      // Update local state after successful Firestore save
-      setSavedAddresses((prev) => [
-        ...prev,
-        { id: Date.now(), ...shippingAddress },
-      ]);
       setShippingAddress({});
       setShowShippingForm(false);
       toast.success("Address saved successfully!");
@@ -331,7 +329,7 @@ const CheckoutPage = () => {
           </div>
 
           <div className="lg:w-1/3 border dark:border-gray-800 p-4 rounded-sm">
-            <h2 className="text-xl font-bold mb-2">Select Shipping Address</h2>
+            <h2 className="text-xl font-bold text-green-600 mb-2">Click on the box to Activate it.</h2>
             {savedAddresses.length > 0 ? (
               <ul className="mb-4">
                 {savedAddresses.map((address) => (
@@ -339,7 +337,7 @@ const CheckoutPage = () => {
                     key={address.id}
                     className={`mb-4 p-3 rounded-md hover:shadow-xl transition-all cursor-pointer border-2 dark:border-gray-800 ${
                       selectedAddressId === address.id
-                        ? "border-blue-500 bg-blue-100"
+                        ? "border-green-500 bg-blue-100"
                         : ""
                     }`}
                     onClick={() => handleSelectAddress(address)}

@@ -96,7 +96,7 @@ const Testimonial = () => {
           <p className="text-sm text-primary p-9">
             What Our Customers are Saying
           </p>
-          <h1 className="text-3xl font-bold -mt-7">Testimonials</h1>
+          <h1 className="text-3xl font-bold -mt-7">Reviews</h1>
         </div>
 
         {/* Testimonial Cards */}
