@@ -133,7 +133,7 @@ const CheckoutPage = () => {
   const paystackConfig = {
     email,
     amount: totalAmount,
-    publicKey: "pk_test_419b147cfa4881543dfc8c3d559f0f60f8fdd15a",
+    publicKey: import.meta.env.VITE_PAYSTACK_KEY,
     metadata: { cartItems, shippingAddress },
     text: "Pay Now",
     onSuccess: handlePaymentSuccess,
