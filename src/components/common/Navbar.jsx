@@ -160,6 +160,7 @@ const Navbar = () => {
 
   // Handle Navigation
   const handleProductClick = (category, searchQuery) => {
+    window.scrollTo(0, 0);
     console.log("Navigating to category:", category);
     navigate(`/${category}`, { state: { searchQuery } }); // Pass the search query as state
     setSearchQuery(""); // Clear search bar after navigation

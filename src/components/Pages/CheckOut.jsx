@@ -228,6 +228,7 @@ const CheckoutPage = () => {
     } finally {
       setIsSaving(false);
     }
+    window.scrollTo(0, 0);
   };
 
   //--------------------- Handle Remove Address ----------------------->
@@ -329,7 +330,9 @@ const CheckoutPage = () => {
           </div>
 
           <div className="lg:w-1/3 border dark:border-gray-800 p-4 rounded-sm">
-            <h2 className="text-xl font-bold text-green-600 mb-2">Click on the box to Activate it.</h2>
+            <h2 className="text-xl font-bold text-green-600 mb-2">
+              Click on the box to Activate it.
+            </h2>
             {savedAddresses.length > 0 ? (
               <ul className="mb-4">
                 {savedAddresses.map((address) => (
@@ -337,7 +340,7 @@ const CheckoutPage = () => {
                     key={address.id}
                     className={`mb-4 p-3 rounded-md hover:shadow-xl transition-all cursor-pointer border-2 dark:border-gray-800 ${
                       selectedAddressId === address.id
-                        ? "border-green-500 bg-blue-100"
+                        ? "border-green-500 dark:border-green-500"
                         : ""
                     }`}
                     onClick={() => handleSelectAddress(address)}
